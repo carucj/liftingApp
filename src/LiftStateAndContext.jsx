@@ -147,6 +147,39 @@ function reducer(state, action) {
                     }))
                 }))
             }));
+        //need to add in the id of the week and the day that the exercise is added to
+        //see copilot for what to do
+        case 'addExercise':
+            return state.map(weeklyLift =>
+                weeklyLift.id === action.id ? {
+                    ...weeklyLift,
+                    data: weeklyLift.data.map(datum =>
+                        datum.id === action.nestedId ? {
+                            ...datum,
+                            //exercises is an array of object, so to map over each one, we want to return exercises and then add one at the end
+                            exercises: [...datum.exercises,
+                            {
+                                id: uuid(),
+                                tier: "Added",
+                                name: action.name,
+                                sets: action.sets,
+                                targetWeight: action.targetWeight,
+                                targetReps: action.targetReps,
+                                addSets: true,
+                                setResults: Array.from({ length: action.sets }, () => ({
+                                    id: uuid(),
+                                    actWeight: 0,
+                                    actReps: 0,
+                                    completeExercise: false
+                                }))
+                            }
+                            ]
+                        } : datum
+                    )
+                } : weeklyLift
+            )
+
+
         case 'setPage':
             return state.map(weeklyLift => ({
                 ...weeklyLift,

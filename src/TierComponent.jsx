@@ -33,15 +33,3 @@ export default function TierComponent({ exercise }) { //id
     )
 }
 
-
-//old code version
-// <LiftComponent
-//                         //may need a uuid here or something to make sure the keys are unique
-//                         key={uuid()}
-//                         setNumber={idx + 1}
-//                         targetWeight={exercise.targetWeightweight} //do we need to pass this in here or can we just get it from the state in the component?
-//                         targetReps={exercise.targetReps}
-//                         checked={exercise.complete}
-//                         deleteSet={() => dispatch({ type: 'deleteSet', id: exercise.id })} //is set.id passed in automatically? (set.id)
-//                         completeSet={(weight, reps) => dispatch({ type: 'recordSet', id: exercise.id, weight: weight, reps: reps })}
-//                     />
