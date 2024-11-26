@@ -20,26 +20,26 @@ export default function LiftManager() {
     // const tiers = ['T2', 'T3']
     const sets = [{ value: 1 }, { value: 2 }, { value: 3 }]
 
-    const handlePageChange = (e, value) => {
-        e.preventDefault()
+    const handlePageChange = (event, value) => {
+        event.preventDefault()
         weeklyLifts.map((weeklyLift) => {
             dispatch({ type: 'setPage', id: weeklyLift.id, page: value })
         });
     };
 
-    const handleTabChange = (ev, Value) => {
-        ev.preventDefault()
+    const handleTabChange = (event, Value) => {
+        event.preventDefault()
         setTab(Value);
     };
-    const handleAddExercise = (eve) => {
-        eve.preventDefault()
+    const handleAddExercise = (event) => {
+        event.preventDefault()
         setAddExerciseFormVisible(!addExerciseFormVisible)
     }
 
-    const handleNewExerciseChange = (even) => {
-        even.preventDefault()
-        const value = even.target.value === '' ? '' : even.target.value;
-        switch (even.target.name) {
+    const handleNewExerciseChange = (event) => {
+        event.preventDefault()
+        const value = event.target.value === '' ? '' : event.target.value;
+        switch (event.target.name) {
             // case 'tier':
             //     setNewExercise({ ...newExercise, tier: value })
             //     break;
@@ -71,6 +71,7 @@ export default function LiftManager() {
 
     return (
         <Container sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
             {
                 weeklyLifts.map((weeklyLift) =>
                     weeklyLift.data.map((datum) => (

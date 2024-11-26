@@ -1,0 +1,163 @@
+import { v4 as uuid } from 'uuid';
+
+const initialState = (initialValues) => {
+    return [{
+        id: uuid(),
+        week: 1,
+        page: 1,
+        data:
+            initialValues.map((initialValue) => ({
+                id: uuid(),
+                day: initialValue.day,
+                completeDay: false,
+                exercises: initialValue.lifts.map((lift) => ({
+                    ...lift,
+                    setResults: Array.from({ length: lift.sets }, () => ({
+                        id: uuid(),
+                        actWeight: 0,
+                        actReps: 0,
+                        completeExercise: false
+                    }))
+                }))
+            })),
+    }]
+}
+
+function reducer(state, action) {
+
+    const updatedState = state.map(weeklyLift => ({
+        ...weeklyLift,
+        page: weeklyLift.page < 4 ? weeklyLift.page + 1 : weeklyLift.page,
+        data: weeklyLift.data.map(datum => ({
+            ...datum,
+            completeDay: action.id === datum.id ? !datum.completeDay : datum.completeDay
+        }))
+    }));
+
+    const allDaysComplete = state.every(weeklyLift => {
+        const completedDays = weeklyLift.data.filter(datum => datum.completeDay).length;
+        return completedDays >= weeklyLift.data.length - 1;
+    });
+
+    const prevWeek = state[state.length - 1];
+    const newWeekEntry = {
+        id: uuid(),
+        week: prevWeek.week + 1,
+        page: 1,
+        data: prevWeek.data.map((datum) => ({
+            id: uuid(),
+            day: datum.day,
+            completeDay: false,
+            exercises: datum.exercises.map((exercise) => ({
+                ...exercise,
+                targetWeight:
+                    exercise.name === 'Squat' || exercise.name === 'Deadlift'
+                        ? exercise.targetWeight + 10
+                        : exercise.targetWeight + 5,
+                setResults: Array.from({ length: exercise.sets }, () => ({
+                    id: uuid(),
+                    actWeight: 0,
+                    actReps: 0,
+                    completeExercise: false
+                }))
+            }))
+        }))
+    }
+
+    switch (action.type) {
+        case 'completeDay':
+            if (allDaysComplete) {
+                return [...updatedState, newWeekEntry];
+            }
+            return updatedState;
+
+        case 'recordSet':
+            return state.map(weeklyLift => ({
+                ...weeklyLift,
+                data: weeklyLift.data.map(datum => ({
+                    ...datum,
+                    exercises: datum.exercises.map(exercise => ({
+                        ...exercise,
+                        setResults: exercise.setResults.map(setResult =>
+                            setResult.id === action.id
+                                ? { ...setResult, actWeight: action.actWeight, actReps: action.actReps, completeExercise: !setResult.completeExercise }
+                                : setResult
+                        )
+                    }))
+                }))
+            }));
+
+        case 'addExercise':
+            return state.map(weeklyLift =>
+                weeklyLift.id === action.id ? {
+                    ...weeklyLift,
+                    data: weeklyLift.data.map(datum =>
+                        datum.id === action.nestedId ? {
+                            ...datum,
+                            exercises: [...datum.exercises,
+                            {
+                                id: uuid(),
+                                tier: "Added",
+                                name: action.name,
+                                sets: action.sets,
+                                targetWeight: action.targetWeight,
+                                targetReps: action.targetReps,
+                                addSets: true,
+                                setResults: Array.from({ length: action.sets }, () => ({
+                                    id: uuid(),
+                                    actWeight: 0,
+                                    actReps: 0,
+                                    completeExercise: false
+                                }))
+                            }
+                            ]
+                        } : datum
+                    )
+                } : weeklyLift
+            )
+
+        case 'setPage':
+            return state.map(weeklyLift => ({
+                ...weeklyLift,
+                page: action.page
+            }));
+
+        case 'addSet':
+            return state.map(weeklyLift => ({
+                ...weeklyLift,
+                data: weeklyLift.data.map(datum => ({
+                    ...datum,
+                    exercises: datum.exercises.map(exercise =>
+                        exercise.id === action.id ? {
+                            ...exercise,
+                            sets: exercise.sets + 1,
+                            setResults: [...exercise.setResults,
+                            {
+                                id: uuid(),
+                                actWeight: 0,
+                                actReps: 0,
+                                complete: false
+                            }]
+                        } : exercise
+                    )
+                }))
+            }));
+
+        case 'deleteSet':
+            return state.map(weeklyLift => ({
+                ...weeklyLift,
+                data: weeklyLift.data.map(datum => ({
+                    ...datum,
+                    exercises: datum.exercises.map(exercise => ({
+                        ...exercise,
+                        setResults: exercise.setResults.filter(setResult => setResult.id !== action.id)
+                    }))
+                }))
+            }));
+
+        default:
+            throw new Error();
+    }
+}
+
+export { reducer, initialState };
