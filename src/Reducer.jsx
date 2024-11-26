@@ -1,19 +1,19 @@
-import { v4 as uuid } from 'uuid';
-
 const initialState = (initialValues) => {
     return [{
-        id: uuid(),
         week: 1,
+        id: 'W1',
         page: 1,
         data:
             initialValues.map((initialValue) => ({
-                id: uuid(),
                 day: initialValue.day,
+                id: `W1d${initialValue.day}`,
                 completeDay: false,
                 exercises: initialValue.lifts.map((lift) => ({
                     ...lift,
-                    setResults: Array.from({ length: lift.sets }, () => ({
-                        id: uuid(),
+                    id: `W1d${initialValue.day}${lift.name.trim()}`,
+                    setResults: Array.from({ length: lift.sets }, (value, idx) => ({
+                        id: `W1d${initialValue.day}${lift.name.trim()}s${idx + 1}`,
+                        setNumber: idx + 1,
                         actWeight: 0,
                         actReps: 0,
                         completeExercise: false
@@ -42,11 +42,11 @@ function reducer(state, action) {
     const prevWeek = state[state.length - 1];
 
     const newWeekEntry = {
-        id: uuid(),
+        id: `W${prevWeek.week + 1}`,
         week: prevWeek.week + 1,
         page: 1,
         data: prevWeek.data.map((datum) => ({
-            id: uuid(),
+            id: `W1d${datum.day}`,
             day: datum.day,
             completeDay: false,
             exercises: datum.exercises.map((exercise) => {
@@ -68,12 +68,13 @@ function reducer(state, action) {
                 }
                 return {
                     ...updatedExercise,
+                    id: `W1d${datum.day}${exercise.name.trim()}`,
                     targetWeight:
                         exercise.name === 'Squat' || exercise.name === 'Deadlift'
                             ? exercise.targetWeight + 10
                             : exercise.targetWeight + 5,
-                    setResults: Array.from({ length: updatedExercise.sets }, () => ({
-                        id: uuid(),
+                    setResults: Array.from({ length: updatedExercise.sets }, (value, idx) => ({
+                        id: `W1d${datum.day}${exercise.name.trim()}s${idx + 1}`,
                         actWeight: 0,
                         actReps: 0,
                         completeExercise: false,
@@ -115,15 +116,15 @@ function reducer(state, action) {
                             ...datum,
                             exercises: [...datum.exercises,
                             {
-                                id: uuid(),
+                                id: `W1d${datum.day}${action.name.trim()}`,
                                 tier: "Added",
                                 name: action.name,
                                 sets: action.sets,
                                 targetWeight: action.targetWeight,
                                 targetReps: action.targetReps,
                                 addSets: true,
-                                setResults: Array.from({ length: action.sets }, () => ({
-                                    id: uuid(),
+                                setResults: Array.from({ length: action.sets }, (value, idx) => ({
+                                    id: `W1d${datum.day}${action.name.trim()}s${idx + 1}`,
                                     actWeight: 0,
                                     actReps: 0,
                                     completeExercise: false
@@ -152,7 +153,7 @@ function reducer(state, action) {
                             sets: exercise.sets + 1,
                             setResults: [...exercise.setResults,
                             {
-                                id: uuid(),
+                                id: `W1d${datum.day}${action.name.trim()}s${exercise.setResults.length}`,
                                 actWeight: 0,
                                 actReps: 0,
                                 complete: false

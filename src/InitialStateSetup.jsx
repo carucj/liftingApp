@@ -1,61 +1,38 @@
 import { Button, FormControl, TextField, Box } from "@mui/material"
 import { useState } from "react";
-import { v4 as uuid } from 'uuid';
 
 const dayLiftsInitArray = [
     {
         day: 1,
         lifts: [
-            {
-                id: uuid(), tier: "T1", name: "Squat", sets: 5, targetWeight: 0, targetReps: 3, addSets: false
-            },
-            {
-                id: uuid(), tier: "T2", name: "Bench Press", sets: 3, targetWeight: 5, targetReps: 10, addSets: true
-            },
-            {
-                id: uuid(), tier: "T3", name: "Pullups", sets: 3, targetWeight: 0, targetReps: 15, addSets: true
-            }
+            { tier: "T1", name: "Squat", sets: 5, targetWeight: 0, targetReps: 3, addSets: false },
+            { tier: "T2", name: "Bench Press", sets: 3, targetWeight: 5, targetReps: 10, addSets: true },
+            { tier: "T3", name: "Pullups", sets: 3, targetWeight: 0, targetReps: 15, addSets: true }
         ]
     },
     {
         day: 2,
         lifts: [
-            {
-                id: uuid(), tier: "T1", name: "Overhead Press", sets: 5, targetWeight: 0, targetReps: 3, addSets: false
-            },
-            {
-                id: uuid(), tier: "T2", name: "Romanian Deadlift", sets: 3, targetWeight: 0, targetReps: 10, addSets: true
-            },
-            {
-                id: uuid(), tier: "T3", name: "Bent Over Row", sets: 3, targetWeight: 0, targetReps: 15, addSets: true
-            }
+            { tier: "T1", name: "Overhead Press", sets: 5, targetWeight: 0, targetReps: 3, addSets: false },
+            { tier: "T2", name: "Romanian Deadlift", sets: 3, targetWeight: 0, targetReps: 10, addSets: true },
+            { tier: "T3", name: "Bent Over Row", sets: 3, targetWeight: 0, targetReps: 15, addSets: true }
         ]
     },
     {
         day: 3,
         lifts: [
-            {
-                id: uuid(), tier: "T1", name: "Bench Press", sets: 5, targetWeight: 0, targetReps: 3, addSets: false
-            },
-            {
-                id: uuid(), tier: "T2", name: "Squat", sets: 3, targetWeight: 0, targetReps: 10, addSets: true
-            },
-            {
-                id: uuid(), tier: "T3", name: "Pullups", sets: 3, targetWeight: 0, targetReps: 15, addSets: true
-            }]
+            { tier: "T1", name: "Bench Press", sets: 5, targetWeight: 0, targetReps: 3, addSets: false },
+            { tier: "T2", name: "Squat", sets: 3, targetWeight: 0, targetReps: 10, addSets: true },
+            { tier: "T3", name: "Pullups", sets: 3, targetWeight: 0, targetReps: 15, addSets: true }
+        ]
     },
     {
         day: 4,
         lifts: [
-            {
-                id: uuid(), tier: "T1", name: "Deadlift", sets: 5, targetWeight: 0, targetReps: 3, addSets: false
-            },
-            {
-                id: uuid(), tier: "T2", name: "Overhead Press", sets: 3, targetWeight: 0, targetReps: 10, addSets: true
-            },
-            {
-                id: uuid(), tier: "T3", name: "Bent Over Row", sets: 3, targetWeight: 0, targetReps: 15, addSets: true
-            }]
+            { tier: "T1", name: "Deadlift", sets: 5, targetWeight: 0, targetReps: 3, addSets: false },
+            { tier: "T2", name: "Overhead Press", sets: 3, targetWeight: 0, targetReps: 10, addSets: true },
+            { tier: "T3", name: "Bent Over Row", sets: 3, targetWeight: 0, targetReps: 15, addSets: true }
+        ]
     }
 ]
 

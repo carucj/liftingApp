@@ -1,10 +1,4 @@
-import Checkbox from '@mui/material/Checkbox'
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import { Box } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+import { Checkbox, OutlinedInput, InputAdornment, FormHelperText, FormControl, Box, IconButton } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useContext } from 'react';
 import { DispatchContext } from './LiftStateAndContext';
