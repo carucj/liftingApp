@@ -40,6 +40,7 @@ function reducer(state, action) {
     });
 
     const prevWeek = state[state.length - 1];
+
     const newWeekEntry = {
         id: uuid(),
         week: prevWeek.week + 1,
@@ -48,21 +49,39 @@ function reducer(state, action) {
             id: uuid(),
             day: datum.day,
             completeDay: false,
-            exercises: datum.exercises.map((exercise) => ({
-                ...exercise,
-                targetWeight:
-                    exercise.name === 'Squat' || exercise.name === 'Deadlift'
-                        ? exercise.targetWeight + 10
-                        : exercise.targetWeight + 5,
-                setResults: Array.from({ length: exercise.sets }, () => ({
-                    id: uuid(),
-                    actWeight: 0,
-                    actReps: 0,
-                    completeExercise: false
-                }))
-            }))
-        }))
-    }
+            exercises: datum.exercises.map((exercise) => {
+                const updatedExercise = { ...exercise };
+                if (exercise.tier === "T1") {
+                    if (
+                        exercise.setResults[4]?.completeExercise === true && exercise.targetReps === 3 && exercise.setResults[4]?.actReps <= 5) {
+                        updatedExercise.sets = 6;
+                        updatedExercise.targetReps = 2;
+                    } else if (
+                        exercise.setResults[5]?.completeExercise === true && exercise.targetReps === 2 && exercise.setResults[5]?.actReps <= 3) {
+                        updatedExercise.sets = 10;
+                        updatedExercise.targetReps = 1;
+                    } else if (
+                        exercise.setResults[9]?.completeExercise === true && exercise.targetReps === 1 && exercise.setResults[9]?.actReps <= 1) {
+                        updatedExercise.sets = 5;
+                        updatedExercise.targetReps = 3;
+                    }
+                }
+                return {
+                    ...updatedExercise,
+                    targetWeight:
+                        exercise.name === 'Squat' || exercise.name === 'Deadlift'
+                            ? exercise.targetWeight + 10
+                            : exercise.targetWeight + 5,
+                    setResults: Array.from({ length: updatedExercise.sets }, () => ({
+                        id: uuid(),
+                        actWeight: 0,
+                        actReps: 0,
+                        completeExercise: false,
+                    })),
+                };
+            }),
+        })),
+    };
 
     switch (action.type) {
         case 'completeDay':
