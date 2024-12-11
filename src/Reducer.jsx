@@ -7,7 +7,7 @@ const initialState = (initialValues) => {
             initialValues.map((initialValue) => ({
                 day: initialValue.day,
                 id: `W1d${initialValue.day}`,
-                completeDay: false,
+                isDayComplete: false,
                 exercises: initialValue.lifts.map((lift) => ({
                     ...lift,
                     id: `W1d${initialValue.day}${lift.name.trim()}`,
@@ -16,7 +16,7 @@ const initialState = (initialValues) => {
                         setNumber: idx + 1,
                         actWeight: 0,
                         actReps: 0,
-                        completeExercise: false
+                        isSetComplete: false
                     }))
                 }))
             })),
@@ -24,71 +24,102 @@ const initialState = (initialValues) => {
 }
 
 function reducer(state, action) {
-
-    const updatedState = state.map(weeklyLift => ({
-        ...weeklyLift,
-        page: weeklyLift.page < 4 ? weeklyLift.page + 1 : weeklyLift.page,
-        data: weeklyLift.data.map(datum => ({
-            ...datum,
-            completeDay: action.id === datum.id ? !datum.completeDay : datum.completeDay
-        }))
-    }));
-
-    const allDaysComplete = state.every(weeklyLift => {
-        const completedDays = weeklyLift.data.filter(datum => datum.completeDay).length;
-        return completedDays >= weeklyLift.data.length - 1;
-    });
-
-    const prevWeek = state[state.length - 1];
-
-    const newWeekEntry = {
-        id: `W${prevWeek.week + 1}`,
-        week: prevWeek.week + 1,
-        page: 1,
-        data: prevWeek.data.map((datum) => ({
-            id: `W1d${datum.day}`,
-            day: datum.day,
-            completeDay: false,
-            exercises: datum.exercises.map((exercise) => {
-                const updatedExercise = { ...exercise };
-                if (exercise.tier === "T1") {
-                    if (
-                        exercise.setResults[4]?.completeExercise === true && exercise.targetReps === 3 && exercise.setResults[4]?.actReps <= 5) {
-                        updatedExercise.sets = 6;
-                        updatedExercise.targetReps = 2;
-                    } else if (
-                        exercise.setResults[5]?.completeExercise === true && exercise.targetReps === 2 && exercise.setResults[5]?.actReps <= 3) {
-                        updatedExercise.sets = 10;
-                        updatedExercise.targetReps = 1;
-                    } else if (
-                        exercise.setResults[9]?.completeExercise === true && exercise.targetReps === 1 && exercise.setResults[9]?.actReps <= 1) {
-                        updatedExercise.sets = 5;
-                        updatedExercise.targetReps = 3;
-                    }
-                }
-                return {
-                    ...updatedExercise,
-                    id: `W1d${datum.day}${exercise.name.trim()}`,
-                    targetWeight:
-                        exercise.name === 'Squat' || exercise.name === 'Deadlift'
-                            ? exercise.targetWeight + 10
-                            : exercise.targetWeight + 5,
-                    setResults: Array.from({ length: updatedExercise.sets }, (value, idx) => ({
-                        id: `W1d${datum.day}${exercise.name.trim()}s${idx + 1}`,
-                        actWeight: 0,
-                        actReps: 0,
-                        completeExercise: false,
-                    })),
-                };
-            }),
-        })),
-    };
-
     switch (action.type) {
-        case 'completeDay':
+        case 'isDayComplete':
+            //toggle day complete status
+            const updatedDayCompleteState = state.map(weeklyLift => ({
+                ...weeklyLift,
+                data: weeklyLift.data.map(datum => ({
+                    ...datum,
+                    isDayComplete: action.id === datum.id ? !datum.isDayComplete : datum.isDayComplete
+                }))
+            }));
+
+            //only increment page if the day is being marked as complete
+            //basically checks if any day within the week is being marked as complete and if yes, increment page
+            const updatedState = updatedDayCompleteState.map(weeklyLift => ({
+                ...weeklyLift,
+                page: weeklyLift.data.find(datum => datum.id === action.id)?.isDayComplete && weeklyLift.page < 4 ? weeklyLift.page + 1 : weeklyLift.page
+            }));
+
+
+            const allDaysComplete = state.every(weeklyLift => {
+                const completedDays = weeklyLift.data.filter(datum => datum.isDayComplete).length;
+                return completedDays >= weeklyLift.data.length - 1;
+            });
+
+            //grab the most recent week
+            const prevWeek = state[state.length - 1];
+
+            //add new week if all days are complete
+            const newWeekEntry = {
+                id: `W${prevWeek.week + 1}`,
+                week: prevWeek.week + 1,
+                page: 1,
+                data: prevWeek.data.map((datum) => ({
+                    id: `W${prevWeek.week + 1}d${datum.day}`,
+                    day: datum.day,
+                    isDayComplete: false,
+                    exercises: datum.exercises.map((exercise) => {
+                        const updatedExercise = { ...exercise };
+                        if (exercise.tier === "T1") {
+                            if (
+                                exercise.setResults[4]?.isSetComplete === true && exercise.targetReps === 3 && exercise.setResults[4]?.actReps <= 5) {
+                                updatedExercise.sets = 6;
+                                updatedExercise.targetReps = 2;
+                            } else if (
+                                exercise.setResults[5]?.isSetComplete === true && exercise.targetReps === 2 && exercise.setResults[5]?.actReps <= 3) {
+                                updatedExercise.sets = 10;
+                                updatedExercise.targetReps = 1;
+                            } else if (
+                                exercise.setResults[9]?.isSetComplete === true && exercise.targetReps === 1 && exercise.setResults[9]?.actReps <= 1) {
+                                updatedExercise.sets = 5;
+                                updatedExercise.targetReps = 3;
+                            }
+                        }
+                        return {
+                            ...updatedExercise,
+                            id: `W${prevWeek.week + 1}d${datum.day}${exercise.name.trim()}`,
+                            targetWeight:
+                                exercise.name === 'Squat' || exercise.name === 'Deadlift'
+                                    ? exercise.targetWeight + 10
+                                    : exercise.targetWeight + 5,
+                            setResults: Array.from({ length: updatedExercise.sets }, (value, idx) => ({
+                                id: `W${prevWeek.week + 1}d${datum.day}${exercise.name.trim()}s${idx + 1}`,
+                                setNumber: idx + 1,
+                                actWeight: 0,
+                                actReps: 0,
+                                isSetComplete: false,
+                            })),
+                        };
+                    }),
+                })),
+            };
+
+            //send updated state to db
+            const saveStateToDb = async (updatedState) => {
+                try {
+                    const response = await fetch('/api/data', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updatedState)
+                    });
+                    if (!response.ok) throw new Error('Failed to save data');
+                    const result = await response.json();
+                    console.log('Save successful:', result);
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                }
+            };
+
+            //somehow W2 got pushed to be before week 1 so when week 2 incremented, it created a new W2
             if (allDaysComplete) {
+                saveStateToDb([...updatedState, newWeekEntry]);
                 return [...updatedState, newWeekEntry];
             }
+            saveStateToDb(updatedState);
             return updatedState;
 
         case 'recordSet':
@@ -100,7 +131,7 @@ function reducer(state, action) {
                         ...exercise,
                         setResults: exercise.setResults.map(setResult =>
                             setResult.id === action.id
-                                ? { ...setResult, actWeight: action.actWeight, actReps: action.actReps, completeExercise: !setResult.completeExercise }
+                                ? { ...setResult, actWeight: action.actWeight, actReps: action.actReps, isSetComplete: !setResult.isSetComplete }
                                 : setResult
                         )
                     }))
@@ -127,7 +158,7 @@ function reducer(state, action) {
                                     id: `W1d${datum.day}${action.name.trim()}s${idx + 1}`,
                                     actWeight: 0,
                                     actReps: 0,
-                                    completeExercise: false
+                                    isSetComplete: false
                                 }))
                             }
                             ]

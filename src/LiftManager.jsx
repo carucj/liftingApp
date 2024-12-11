@@ -14,10 +14,9 @@ export default function LiftManager() {
     const [newExercise, setNewExercise] = useState({ name: '', sets: 1, targetWeight: 0, targetReps: 0 }); //need to define this array to fit the new exercise fields
     const [tab, setTab] = useState(
         weeklyLifts.find(weeklyLift =>
-            weeklyLift.data.completeDay === false
+            weeklyLift.data.isDayComplete === false
         ) || 1
     )
-    // const tiers = ['T2', 'T3']
     const sets = [{ value: 1 }, { value: 2 }, { value: 3 }]
 
     const handlePageChange = (event, value) => {
@@ -40,20 +39,17 @@ export default function LiftManager() {
         event.preventDefault()
         const value = event.target.value === '' ? '' : event.target.value;
         switch (event.target.name) {
-            // case 'tier':
-            //     setNewExercise({ ...newExercise, tier: value })
-            //     break;
             case 'name':
                 setNewExercise({ ...newExercise, name: value })
                 break;
             case 'sets':
-                setNewExercise({ ...newExercise, sets: value })
+                setNewExercise({ ...newExercise, sets: Number(value) })
                 break;
             case 'targetWeight':
-                setNewExercise({ ...newExercise, targetWeight: value })
+                setNewExercise({ ...newExercise, targetWeight: Number(value) })
                 break;
             case 'targetReps':
-                setNewExercise({ ...newExercise, targetReps: value })
+                setNewExercise({ ...newExercise, targetReps: Number(value) })
                 break;
             default:
                 break;
@@ -122,15 +118,6 @@ export default function LiftManager() {
                                             id="exercise-name-input"
                                             aria-describedby="exercise-name-input"
                                         />
-                                        {/* <TextField
-                                            id="Exercise Tier"
-                                            namne="tier"
-                                            select
-                                            label="Tier"
-                                            defaultValue="T2"
-                                        > 
-                                            {tiers.map((tier, idx) => (<MenuItem key={idx} value={tier}></MenuItem>))}
-                                        </TextField>*/}
                                         <TextField
                                             id="Exercise Sets"
                                             name="sets"
@@ -175,12 +162,12 @@ export default function LiftManager() {
                                 </form>)}
                             {/* Complete Day Button */}
                             <Button
-                                onClick={() => dispatch({ type: 'completeDay', id: datum.id })}
+                                onClick={() => dispatch({ type: 'isDayComplete', id: datum.id })}
                                 size="large"
                                 sx={{ backgroundColor: '#30a5ff', margin: "15px" }}
                                 variant="contained"
                             >
-                                Complete Workout
+                                {datum.isDayComplete ? "Edit Workout" : "Complete Workout"}
                             </Button>
                         </Container >
                     ))

@@ -26,7 +26,7 @@ export default function LiftComponent({ exercise, setResult, setNumber }) {
             <p style={{ color: "black" }}>Set {setNumber}:   {exercise.targetWeight}x{exercise.targetReps}</p>
             <form>
                 <FormControl
-                    disabled={setResult.completeExercise}
+                    disabled={setResult.isSetComplete}
                     sx={{ m: 1, width: '25ch', }} variant="outlined">
                     <OutlinedInput
                         value={weight}
@@ -44,7 +44,7 @@ export default function LiftComponent({ exercise, setResult, setNumber }) {
                 </FormControl>
 
                 <FormControl
-                    disabled={setResult.completeExercise}
+                    disabled={setResult.isSetComplete}
                     sx={{ m: 1, width: '25ch', }} variant="outlined">
                     <OutlinedInput
                         value={reps}
@@ -66,7 +66,7 @@ export default function LiftComponent({ exercise, setResult, setNumber }) {
                             color: '#30a5ff',
                         }
                     }}
-                    checked={setResult.completeExercise}
+                    checked={setResult.isSetComplete}
                     onChange={handleSubmit}
                 // inputProps={{ 'aria-label': 'controlled' }}
                 />
