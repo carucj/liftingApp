@@ -14,8 +14,8 @@ const initialState = (initialValues) => {
                     setResults: Array.from({ length: lift.sets }, (value, idx) => ({
                         id: `W1d${initialValue.day}${lift.name.trim()}s${idx + 1}`,
                         setNumber: idx + 1,
-                        actWeight: 0,
-                        actReps: 0,
+                        actWeight: "",
+                        actReps: "",
                         isSetComplete: false
                     }))
                 }))
@@ -184,7 +184,7 @@ function reducer(state, action) {
                             sets: exercise.sets + 1,
                             setResults: [...exercise.setResults,
                             {
-                                id: `W1d${datum.day}${action.name.trim()}s${exercise.setResults.length}`,
+                                id: `W1d${datum.day}${action.name.trim()}s${exercise.setResults.length + 1}`,
                                 actWeight: 0,
                                 actReps: 0,
                                 complete: false
@@ -193,6 +193,7 @@ function reducer(state, action) {
                     )
                 }))
             }));
+        //this needs to remove the exercise if the set count would be below zero
 
         case 'deleteSet':
             return state.map(weeklyLift => ({
@@ -201,6 +202,7 @@ function reducer(state, action) {
                     ...datum,
                     exercises: datum.exercises.map(exercise => ({
                         ...exercise,
+                        sets: exercise.sets - 1,
                         setResults: exercise.setResults.filter(setResult => setResult.id !== action.id)
                     }))
                 }))

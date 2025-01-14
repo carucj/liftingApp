@@ -74,30 +74,34 @@ export default function LiftManager() {
                         weeklyLift.page === datum.day && tab === weeklyLift.week &&
                         <Container maxWidth="md" key={weeklyLift.id} >
                             {/* Title Box */}
-                            <Box sx={{
-                                padding: '10px',
-                                margin: '0.25em 1em ',
-                                backgroundColor: '#9cd4ff',
-                                border: '1px solid #ddd',
-                                borderRadius: 5,
-                                color: "white",
-                            }}>
-                                <Typography variant="h4" sx={{ textAlign: 'center' }}>
+                            <Box
+                                data-testid='titleBox'
+                                sx={{
+                                    padding: '10px',
+                                    margin: '0.25em 1em ',
+                                    backgroundColor: '#9cd4ff',
+                                    border: '1px solid #ddd',
+                                    borderRadius: 5,
+                                    color: "white",
+                                }}>
+                                <Typography data-testid='titleText' variant="h4" sx={{ textAlign: 'center' }}>
                                     Week {weeklyLift.week}, Day {datum.day}
                                 </Typography>
                             </Box>
                             {/* Render a Tier Component for each exercise for each day */}
-                            {datum.exercises.map((exercise) => (<TierComponent key={exercise.id} exercise={exercise} />))}
+                            {datum.exercises.map((exercise) => (exercise.sets > 0 && <TierComponent key={exercise.id} exercise={exercise} />))}
+                            {/* Add Exercise Button */}
                             <Box sx={{ padding: '10px', margin: '0.25em 1em ', backgroundColor: '#9cd4ff', border: '1px solid #ddd', borderRadius: 5, justifyContent: 'center' }}>
-                                <IconButton onClick={handleAddExercise} type="button">
+                                <IconButton data-testid='addExerciseButton' onClick={handleAddExercise} type="button">
                                     <Typography variant="h6" sx={{ margin: 1, color: 'white' }}>
                                         Add Exercise
                                     </Typography>
                                     <AddIcon sx={{ '& .MuiSvgIcon-root': { fontSize: 40 }, border: "1px black", backgroundColor: "white", borderRadius: 20, }} />
                                 </IconButton>
                             </Box>
+                            {/* Add Exercise Form */}
                             {
-                                addExerciseFormVisible && (<form>
+                                addExerciseFormVisible && (<form data-testId='addExerciseForm'>
                                     <FormControl
                                         sx={{
                                             m: 1,
@@ -162,6 +166,7 @@ export default function LiftManager() {
                                 </form>)}
                             {/* Complete Day Button */}
                             <Button
+                                data-testId='completeDayButton'
                                 onClick={() => dispatch({ type: 'isDayComplete', id: datum.id })}
                                 size="large"
                                 sx={{ backgroundColor: '#30a5ff', margin: "15px" }}
@@ -177,9 +182,10 @@ export default function LiftManager() {
             {
                 weeklyLifts.map((weeklyLift) =>
                     tab === weeklyLift.week &&
-                    <Container key={weeklyLift.id} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Container key={weeklyLift.id} sx={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
                         <h3>Day</h3>
                         <Pagination
+                            data-testid="pagination"
                             label="Day"
                             variant="outlined"
                             shape="rounded"
@@ -191,9 +197,10 @@ export default function LiftManager() {
                 )
             }
             {/* Tab selector for each week */}
-            <Container sx={{ display: "flex", justifyContent: "center" }}>
+            <Container sx={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
                 <h3>Week</h3>
                 <Pagination
+                    data-testid="tabulation"
                     label="Week"
                     variant="outlined"
                     shape="rounded"

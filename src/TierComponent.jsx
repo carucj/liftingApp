@@ -14,7 +14,7 @@ export default function TierComponent({ exercise }) { //id
     //     .find(exercise => exercise.id === id);
 
     return (
-        <Box sx={{ padding: '10px', margin: '1em', backgroundColor: '#9cd4ff', border: '1px solid #ddd', borderRadius: 5 }}>
+        <Box data-testid='TierComponent' sx={{ padding: '10px', margin: '1em', backgroundColor: '#9cd4ff', border: '1px solid #ddd', borderRadius: 5 }}>
             <Box>{exercise.name}</Box>
             {exercise.setResults.map((setResult, idx) =>
                 <LiftComponent
@@ -25,7 +25,7 @@ export default function TierComponent({ exercise }) { //id
                 />
             )}
             {exercise.addSets &&
-                <IconButton onClick={() => dispatch({ type: 'addSet', id: exercise.id })}>
+                <IconButton aria-label='addSetButton' role='button' name="addSetButton" onClick={() => dispatch({ name: exercise.name, type: 'addSet', id: exercise.id })}>
                     <AddIcon sx={{ '& .MuiSvgIcon-root': { fontSize: 40 }, border: "1px black", backgroundColor: "white", borderRadius: 20, }} />
                 </IconButton>
             }

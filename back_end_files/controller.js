@@ -33,7 +33,7 @@ const getData = async (req, res, next) => {
         `);
         if (data.rowCount == 0)
             return res.status(404).send("No week data exists");
-        console.log('data: ', data)
+        //console.log('data: ', data)
         const reducedData = data.rows.reduce((acc, row) => {
 
             let week = acc.find(w => w.id === row.week_id);
@@ -73,7 +73,16 @@ const getData = async (req, res, next) => {
 
             return acc;
         }, []);
-        //console.log('reduced data: ', JSON.stringify(reducedData, null, 2));
+
+        console.log('Reduced data: ', JSON.stringify(reducedData, null, 2));
+
+        reducedData.forEach(week => {
+            week.data.forEach(data => {
+                data.exercises.sort((a, b) => a.targetReps - b.targetReps);
+            });
+        });
+
+        console.log('sorted reduced data: ', JSON.stringify(reducedData, null, 2));
 
         return res.status(200).json({
             status: 200,

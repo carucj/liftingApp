@@ -1,17 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react';
-// import process from "./back_end_files/process"
-// import dotenv from "./back_end_files/dotenv"
-
-//dotenv.config();
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./setupTest.js'],
+  },
   server: {
     proxy: {
       '/api': {
-        target: `http://localhost:3000`, //${process.env.DB_PORT}
+        target: `http://localhost:3000`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         //stuff added from here: https://stackoverflow.com/questions/64677212/how-to-configure-proxy-in-vite

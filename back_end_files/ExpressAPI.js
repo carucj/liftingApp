@@ -16,7 +16,7 @@ app.post('/api/saveData', async (req, res) => {
     }
 });
 
-//fetch data from reach, woudl be nice to use axios instead of fetch so we don't need the try/catch stuff
+//fetch data from reach, would be nice to use axios instead of fetch so we don't need the try/catch stuff
 const saveData = async (data) => {
     try {
         const response = await fetch('http://localhost:5000/api/saveData', {

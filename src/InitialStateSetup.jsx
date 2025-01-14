@@ -48,6 +48,7 @@ export default function InitialStateSetup({ setInitialValues }) {
     })
 
 
+
     const handleWeightInputChange = (event) => {
         event.preventDefault()
         const value = event.target.value === '' ? '' : Number(event.target.value);
